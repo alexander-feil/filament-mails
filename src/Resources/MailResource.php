@@ -19,7 +19,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
 use Illuminate\View\View;
 use Vormkracht10\FilamentMails\Resources\MailResource\Pages\ListMails;
 use Vormkracht10\FilamentMails\Resources\MailResource\Pages\ViewMail;
@@ -176,7 +175,7 @@ class MailResource extends Resource
                                                 TextEntry::make('type')
                                                     ->label(__('Type'))
                                                     ->badge()
-                                                    ->url(function (Mail $record) {
+                                                    ->url(function (MailEvent $record) {
                                                         $panel = Filament::getCurrentPanel();
                                                         $tenant = Filament::getTenant();
 
@@ -270,7 +269,6 @@ class MailResource extends Resource
                                             ->copyMessage('Copied!')
                                             ->copyMessageDuration(1500)
                                             ->label(__('Text Content'))
-                                            ->formatStateUsing(fn (string $state): HtmlString => new HtmlString(nl2br(e($state))))
                                             ->columnSpanFull(),
                                     ]),
                             ])->columnSpanFull(),
@@ -387,8 +385,8 @@ class MailResource extends Resource
                     ->fillForm(function (Mail $record) {
                         return [
                             'to' => array_keys($record->to),
-                            'cc' => array_keys($record->cc),
-                            'bcc' => array_keys($record->bcc),
+                            'cc' => array_keys($record->cc ?? []),
+                            'bcc' => array_keys($record->bcc ?? []),
                         ];
                     })
                     ->action(function (Mail $record, array $data) {
